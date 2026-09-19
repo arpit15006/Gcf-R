@@ -24,9 +24,15 @@ def create_app(config_class=Config):
     # Register modular blueprints
     from .routes.health import health_bp
     from .routes.disease_risk import disease_risk_bp
+    from .routes.crop_recommendation import crop_recommendation_bp
+    from .routes.crop_yield import crop_yield_bp
+    from .routes.irrigation import irrigation_bp
 
     app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(disease_risk_bp, url_prefix="/api")
+    app.register_blueprint(crop_recommendation_bp)
+    app.register_blueprint(crop_yield_bp)
+    app.register_blueprint(irrigation_bp)
 
     # Global 404 & 500 error handlers
     @app.errorhandler(404)

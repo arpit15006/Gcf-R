@@ -10,9 +10,9 @@ const MODEL_CARDS: ModelCardInfo[] = [
     icon: "🌱",
     description: "Find the most suitable crop based on soil and environmental conditions.",
     route: "/crop-recommendation",
-    status: "development",
-    badgeText: "Teammate Module",
-    owner: "Person 2",
+    status: "active",
+    badgeText: "Active / Deployed",
+    owner: "Person 2 (Khushi)",
   },
   {
     id: "crop-yield",
@@ -20,9 +20,9 @@ const MODEL_CARDS: ModelCardInfo[] = [
     icon: "📈",
     description: "Forecast agricultural yield per hectare using historical trends and inputs.",
     route: "/crop-yield",
-    status: "development",
-    badgeText: "Teammate Module",
-    owner: "Person 3",
+    status: "active",
+    badgeText: "Active / Deployed",
+    owner: "Person 3 (Akhil)",
   },
   {
     id: "disease-risk",
@@ -32,7 +32,7 @@ const MODEL_CARDS: ModelCardInfo[] = [
     route: "/disease-risk",
     status: "active",
     badgeText: "Active / Deployed",
-    owner: "Person 1 + Person 4",
+    owner: "Person 1 + Person 4 (Arpit)",
   },
   {
     id: "irrigation",
@@ -40,9 +40,9 @@ const MODEL_CARDS: ModelCardInfo[] = [
     icon: "💧",
     description: "Calculate optimal field watering schedules based on soil moisture and climate.",
     route: "/irrigation",
-    status: "development",
-    badgeText: "Teammate Module",
-    owner: "Person 5",
+    status: "active",
+    badgeText: "Active / Deployed",
+    owner: "Person 5 (Aditya)",
   },
   {
     id: "weather-risk",
@@ -51,7 +51,7 @@ const MODEL_CARDS: ModelCardInfo[] = [
     description: "Assess adverse microclimate hazards including frost, heat stress, and sudden downpours.",
     route: "/weather-risk",
     status: "development",
-    badgeText: "Teammate Module",
+    badgeText: "In Development",
     owner: "Person 6",
   },
 ]
@@ -90,8 +90,8 @@ export function Dashboard() {
               <CheckCircle2 className="h-4 w-4" />
             </div>
             <div>
-              <div className="text-xs text-slate-500 font-medium">Active Module</div>
-              <div className="text-sm font-semibold text-slate-800">Disease Risk (R Random Forest)</div>
+              <div className="text-xs text-slate-500 font-medium">Active Modules</div>
+              <div className="text-sm font-semibold text-slate-800">4 Operational ML Models</div>
             </div>
           </div>
 

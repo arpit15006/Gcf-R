@@ -1,0 +1,53 @@
+{
+  "model_type": "Multiple Linear Regression",
+  "target": "yield",
+  "unit": "Q/acre",
+  "train_samples": 79,
+  "test_samples": 20,
+  "train_r2": 0.8817,
+  "test_r2": 0.8948,
+  "rmse": 0.6369,
+  "mae": 0.515,
+  "coefficients": {
+    "(Intercept)": 3.6881,
+    "rainfall": -0.0009,
+    "fertilizer": -0.0173,
+    "temperature": -0.2149,
+    "nitrogen": 0.0844,
+    "phosphorus": 0.0972,
+    "potassium": 0.3463
+  },
+  "feature_names": ["rainfall", "fertilizer", "temperature", "nitrogen", "phosphorus", "potassium"],
+  "feature_ranges": {
+    "rainfall": {
+      "min": 400,
+      "max": 1300,
+      "mean": 849.8
+    },
+    "fertilizer": {
+      "min": 50,
+      "max": 80,
+      "mean": 67.81
+    },
+    "temperature": {
+      "min": 24,
+      "max": 40,
+      "mean": 32.39
+    },
+    "nitrogen": {
+      "min": 59,
+      "max": 80,
+      "mean": 70.74
+    },
+    "phosphorus": {
+      "min": 18,
+      "max": 25,
+      "mean": 21.13
+    },
+    "potassium": {
+      "min": 15,
+      "max": 22,
+      "mean": 18.06
+    }
+  }
+}

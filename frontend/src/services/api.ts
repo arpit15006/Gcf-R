@@ -73,6 +73,36 @@ class ApiClient {
       body: JSON.stringify(payload),
     })
   }
+
+  /**
+   * Submit Crop Recommendation request to backend R model inference endpoint
+   */
+  async predictCropRecommendation(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
+    return this.request<Record<string, unknown>>("/models/crop-recommendation/predict", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    })
+  }
+
+  /**
+   * Submit Crop Yield prediction request to backend R model inference endpoint
+   */
+  async predictCropYield(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
+    return this.request<Record<string, unknown>>("/models/crop-yield/predict", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    })
+  }
+
+  /**
+   * Submit Irrigation requirement prediction request to backend R model inference endpoint
+   */
+  async predictIrrigation(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
+    return this.request<Record<string, unknown>>("/models/irrigation/predict", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    })
+  }
 }
 
 export const api = new ApiClient(API_BASE_URL)

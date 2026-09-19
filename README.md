@@ -29,12 +29,12 @@ React + TypeScript + Tailwind CSS + shadcn/ui
 
 | Role | Member | Responsibilities | Status |
 | :--- | :--- | :--- | :--- |
-| **Person 1** | Arpit Patel | Main Dashboard, Global Navigation/Layout, Central API Infrastructure | **Completed** |
-| **Person 4** | Arpit Patel | Flask Backend Engine, Disease Risk R Model, End-to-End Disease Page | **Completed** |
-| **Person 2** | Teammate | Crop Recommendation (`models/crop_recommendation/`) | In Development |
-| **Person 3** | Teammate | Crop Yield Prediction (`models/crop_yield/`) | In Development |
-| **Person 5** | Teammate | Irrigation Requirement (`models/irrigation/`) | In Development |
-| **Person 6** | Teammate | Weather Risk (`models/weather_risk/`) | In Development |
+| **Person 1** | Arpit Patel | Main Dashboard, Global Navigation/Layout, Central API Infrastructure | **Completed & Deployed** |
+| **Person 2** | Khushi | Crop Recommendation (`models/crop_recommendation/`) | **Completed & Merged** |
+| **Person 3** | Akhil | Crop Yield Prediction (`models/crop_yield/`) | **Completed & Merged** |
+| **Person 4** | Arpit Patel | Flask Backend Engine, Disease Risk R Model, End-to-End Disease Page | **Completed & Deployed** |
+| **Person 5** | Aditya | Irrigation Requirement (`models/irrigation/`) | **Completed & Merged** |
+| **Person 6** | Teammate | Weather Risk (`models/weather_risk/`) | *In Development (Pending)* |
 
 ---
 
