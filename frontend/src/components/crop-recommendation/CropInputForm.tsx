@@ -1,334 +1,319 @@
-import React, { useState } from 'react';
-import { 
-  Sprout, 
-  FlaskConical, 
-  Thermometer, 
-  Droplets, 
-  TestTube, 
-  CloudRain, 
-  RotateCcw, 
-  Sparkles, 
-  Info 
-} from 'lucide-react';
+import React, { useState } from 'react'
+import { Sparkles, SlidersHorizontal, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Slider } from '@/components/ui/slider'
 
 export interface CropInputValues {
-  N: number;
-  P: number;
-  K: number;
-  temperature: number;
-  humidity: number;
-  ph: number;
-  rainfall: number;
+  N: number
+  P: number
+  K: number
+  temperature: number
+  humidity: number
+  ph: number
+  rainfall: number
 }
 
 interface CropInputFormProps {
-  onSubmit: (values: CropInputValues) => void;
-  isLoading: boolean;
+  onSubmit: (values: CropInputValues) => void
+  isLoading: boolean
 }
 
-const DEFAULT_VALUES: CropInputValues = {
-  N: 90,
-  P: 42,
-  K: 43,
-  temperature: 20.87,
-  humidity: 82.0,
-  ph: 6.5,
-  rainfall: 202.93,
-};
-
-const PRESETS: { name: string; icon: string; values: CropInputValues }[] = [
+const PRESETS: { name: string; values: CropInputValues }[] = [
   {
     name: "Monsoon Rice",
-    icon: "🌾",
-    values: { N: 90, P: 42, K: 43, temperature: 20.87, humidity: 82.0, ph: 6.5, rainfall: 202.93 }
+    values: { N: 90, P: 42, K: 43, temperature: 20.9, humidity: 82.0, ph: 6.5, rainfall: 202.9 }
   },
   {
     name: "Dryland Maize",
-    icon: "🌽",
     values: { N: 78, P: 48, K: 20, temperature: 22.3, humidity: 65.0, ph: 6.2, rainfall: 85.5 }
   },
   {
-    name: "High Potassium Grapes",
-    icon: "🍇",
+    name: "High-K Grapes",
     values: { N: 23, P: 132, K: 202, temperature: 23.8, humidity: 81.5, ph: 6.0, rainfall: 69.8 }
   },
   {
-    name: "Semi-Arid Chickpea",
-    icon: "🫘",
-    values: { N: 40, P: 68, K: 79, temperature: 18.2, humidity: 16.5, ph: 7.4, rainfall: 78.4 }
+    name: "Cotton",
+    values: { N: 120, P: 45, K: 20, temperature: 24.5, humidity: 80.0, ph: 6.8, rainfall: 80.0 }
   }
-];
+]
 
-export const CropInputForm: React.FC<CropInputFormProps> = ({ onSubmit, isLoading }) => {
-  const [formValues, setFormValues] = useState<CropInputValues>(DEFAULT_VALUES);
-  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
-
-  const handleChange = (field: keyof CropInputValues, value: string) => {
-    const numVal = parseFloat(value);
-    setFormValues(prev => ({
-      ...prev,
-      [field]: isNaN(numVal) ? 0 : numVal
-    }));
-  };
+export function CropInputForm({ onSubmit, isLoading }: CropInputFormProps) {
+  const [n, setN] = useState<number>(90)
+  const [p, setP] = useState<number>(42)
+  const [k, setK] = useState<number>(43)
+  const [temperature, setTemperature] = useState<number>(20.9)
+  const [humidity, setHumidity] = useState<number>(82.0)
+  const [ph, setPh] = useState<number>(6.5)
+  const [rainfall, setRainfall] = useState<number>(202.9)
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formValues);
-  };
+    e.preventDefault()
+    onSubmit({
+      N: Number(n),
+      P: Number(p),
+      K: Number(k),
+      temperature: Number(temperature),
+      humidity: Number(humidity),
+      ph: Number(ph),
+      rainfall: Number(rainfall)
+    })
+  }
 
-  const handleReset = () => {
-    setFormValues(DEFAULT_VALUES);
-  };
-
-  const applyPreset = (presetValues: CropInputValues) => {
-    setFormValues(presetValues);
-  };
+  const applyPreset = (vals: CropInputValues) => {
+    setN(vals.N)
+    setP(vals.P)
+    setK(vals.K)
+    setTemperature(vals.temperature)
+    setHumidity(vals.humidity)
+    setPh(vals.ph)
+    setRainfall(vals.rainfall)
+  }
 
   return (
-    <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-6 shadow-xl text-slate-100">
-      {/* Header & Presets */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-6 border-b border-slate-800 gap-4">
-        <div>
-          <h2 className="text-xl font-bold flex items-center gap-2 text-emerald-400">
-            <Sprout className="w-5 h-5" />
-            Soil & Climatic Input Features
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Enter N-P-K soil parameters along with regional climatic metrics.
-          </p>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Field Presets */}
+      <div className="flex flex-wrap items-center gap-2 pb-3 border-b border-slate-100">
+        <span className="text-xs text-slate-500 font-medium flex items-center gap-1 mr-1">
+          <Sparkles className="h-3.5 w-3.5 text-emerald-600" /> Presets:
+        </span>
+        {PRESETS.map((preset) => (
+          <Button
+            key={preset.name}
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => applyPreset(preset.values)}
+            className="h-7 text-xs px-2.5 bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 border-slate-200"
+          >
+            {preset.name}
+          </Button>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        {/* Nitrogen (N) */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="n-input" className="text-sm font-medium text-slate-700">Nitrogen (N)</Label>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              {n} kg/ha
+            </span>
+          </div>
+          <Input
+            id="n-input"
+            type="number"
+            min="0"
+            max="140"
+            step="1"
+            value={n}
+            onChange={(e) => setN(parseFloat(e.target.value) || 0)}
+            disabled={isLoading}
+          />
+          <Slider
+            min={0}
+            max={140}
+            step={1}
+            value={[n]}
+            onValueChange={([val]) => setN(val)}
+            disabled={isLoading}
+            className="pt-1"
+          />
         </div>
 
-        {/* Quick Presets */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-slate-400 flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Presets:
-          </span>
-          {PRESETS.map((preset, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => applyPreset(preset.values)}
-              className="text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-emerald-950/60 hover:text-emerald-300 hover:border-emerald-600/50 border border-slate-700 transition-all flex items-center gap-1"
-            >
-              <span>{preset.icon}</span>
-              <span>{preset.name}</span>
-            </button>
-          ))}
+        {/* Phosphorus (P) */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="p-input" className="text-sm font-medium text-slate-700">Phosphorus (P)</Label>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              {p} kg/ha
+            </span>
+          </div>
+          <Input
+            id="p-input"
+            type="number"
+            min="5"
+            max="145"
+            step="1"
+            value={p}
+            onChange={(e) => setP(parseFloat(e.target.value) || 0)}
+            disabled={isLoading}
+          />
+          <Slider
+            min={5}
+            max={145}
+            step={1}
+            value={[p]}
+            onValueChange={([val]) => setP(val)}
+            disabled={isLoading}
+            className="pt-1"
+          />
+        </div>
+
+        {/* Potassium (K) */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="k-input" className="text-sm font-medium text-slate-700">Potassium (K)</Label>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              {k} kg/ha
+            </span>
+          </div>
+          <Input
+            id="k-input"
+            type="number"
+            min="5"
+            max="205"
+            step="1"
+            value={k}
+            onChange={(e) => setK(parseFloat(e.target.value) || 0)}
+            disabled={isLoading}
+          />
+          <Slider
+            min={5}
+            max={205}
+            step={1}
+            value={[k]}
+            onValueChange={([val]) => setK(val)}
+            disabled={isLoading}
+            className="pt-1"
+          />
+        </div>
+
+        {/* Soil pH */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="ph-input" className="text-sm font-medium text-slate-700">Soil pH</Label>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              {ph} pH
+            </span>
+          </div>
+          <Input
+            id="ph-input"
+            type="number"
+            min="3.5"
+            max="10.0"
+            step="0.1"
+            value={ph}
+            onChange={(e) => setPh(parseFloat(e.target.value) || 0)}
+            disabled={isLoading}
+          />
+          <Slider
+            min={3.5}
+            max={10.0}
+            step={0.1}
+            value={[ph]}
+            onValueChange={([val]) => setPh(Number(val.toFixed(1)))}
+            disabled={isLoading}
+            className="pt-1"
+          />
+        </div>
+
+        {/* Temperature */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="temp-input" className="text-sm font-medium text-slate-700">Temperature</Label>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              {temperature} °C
+            </span>
+          </div>
+          <Input
+            id="temp-input"
+            type="number"
+            min="8.0"
+            max="45.0"
+            step="0.1"
+            value={temperature}
+            onChange={(e) => setTemperature(parseFloat(e.target.value) || 0)}
+            disabled={isLoading}
+          />
+          <Slider
+            min={8.0}
+            max={45.0}
+            step={0.5}
+            value={[temperature]}
+            onValueChange={([val]) => setTemperature(Number(val.toFixed(1)))}
+            disabled={isLoading}
+            className="pt-1"
+          />
+        </div>
+
+        {/* Humidity */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="humidity-input" className="text-sm font-medium text-slate-700">Relative Humidity</Label>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              {humidity} %
+            </span>
+          </div>
+          <Input
+            id="humidity-input"
+            type="number"
+            min="10.0"
+            max="100.0"
+            step="0.1"
+            value={humidity}
+            onChange={(e) => setHumidity(parseFloat(e.target.value) || 0)}
+            disabled={isLoading}
+          />
+          <Slider
+            min={10.0}
+            max={100.0}
+            step={1.0}
+            value={[humidity]}
+            onValueChange={([val]) => setHumidity(Number(val.toFixed(1)))}
+            disabled={isLoading}
+            className="pt-1"
+          />
+        </div>
+
+        {/* Rainfall */}
+        <div className="sm:col-span-2 space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="rainfall-input" className="text-sm font-medium text-slate-700">Annual Rainfall</Label>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              {rainfall} mm
+            </span>
+          </div>
+          <Input
+            id="rainfall-input"
+            type="number"
+            min="20.0"
+            max="300.0"
+            step="1.0"
+            value={rainfall}
+            onChange={(e) => setRainfall(parseFloat(e.target.value) || 0)}
+            disabled={isLoading}
+          />
+          <Slider
+            min={20.0}
+            max={300.0}
+            step={2.0}
+            value={[rainfall]}
+            onValueChange={([val]) => setRainfall(Number(val.toFixed(1)))}
+            disabled={isLoading}
+            className="pt-1"
+          />
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Soil NPK Section */}
-        <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
-            <FlaskConical className="w-4 h-4 text-emerald-400" />
-            Soil Macro-Nutrients (kg/ha)
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Nitrogen */}
-            <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 focus-within:border-emerald-500 transition-all relative">
-              <div className="flex justify-between items-center mb-1">
-                <label className="text-xs font-medium text-slate-300">Nitrogen (N)</label>
-                <button
-                  type="button"
-                  onMouseEnter={() => setActiveTooltip('N')}
-                  onMouseLeave={() => setActiveTooltip(null)}
-                  className="text-slate-500 hover:text-slate-300"
-                >
-                  <Info className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              {activeTooltip === 'N' && (
-                <div className="absolute top-8 right-2 z-10 w-48 p-2 bg-slate-800 text-[11px] text-slate-200 rounded-md shadow-lg border border-slate-700">
-                  Promotes leaf & vegetative growth. Range: 0 - 140 kg/ha.
-                </div>
-              )}
-              <input
-                type="number"
-                step="any"
-                min="0"
-                max="200"
-                required
-                value={formValues.N}
-                onChange={(e) => handleChange('N', e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-emerald-300 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-            </div>
-
-            {/* Phosphorus */}
-            <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 focus-within:border-emerald-500 transition-all relative">
-              <div className="flex justify-between items-center mb-1">
-                <label className="text-xs font-medium text-slate-300">Phosphorus (P)</label>
-                <button
-                  type="button"
-                  onMouseEnter={() => setActiveTooltip('P')}
-                  onMouseLeave={() => setActiveTooltip(null)}
-                  className="text-slate-500 hover:text-slate-300"
-                >
-                  <Info className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              {activeTooltip === 'P' && (
-                <div className="absolute top-8 right-2 z-10 w-48 p-2 bg-slate-800 text-[11px] text-slate-200 rounded-md shadow-lg border border-slate-700">
-                  Stimulates root development & seed formation. Range: 5 - 145 kg/ha.
-                </div>
-              )}
-              <input
-                type="number"
-                step="any"
-                min="0"
-                max="200"
-                required
-                value={formValues.P}
-                onChange={(e) => handleChange('P', e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-emerald-300 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-            </div>
-
-            {/* Potassium */}
-            <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 focus-within:border-emerald-500 transition-all relative">
-              <div className="flex justify-between items-center mb-1">
-                <label className="text-xs font-medium text-slate-300">Potassium (K)</label>
-                <button
-                  type="button"
-                  onMouseEnter={() => setActiveTooltip('K')}
-                  onMouseLeave={() => setActiveTooltip(null)}
-                  className="text-slate-500 hover:text-slate-300"
-                >
-                  <Info className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              {activeTooltip === 'K' && (
-                <div className="absolute top-8 right-2 z-10 w-48 p-2 bg-slate-800 text-[11px] text-slate-200 rounded-md shadow-lg border border-slate-700">
-                  Enhances drought tolerance & crop quality. Range: 5 - 205 kg/ha.
-                </div>
-              )}
-              <input
-                type="number"
-                step="any"
-                min="0"
-                max="250"
-                required
-                value={formValues.K}
-                onChange={(e) => handleChange('K', e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-emerald-300 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Environmental & Soil pH Section */}
-        <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
-            <Thermometer className="w-4 h-4 text-cyan-400" />
-            Climatic & Soil pH Metrics
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {/* Temperature */}
-            <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 focus-within:border-cyan-500 transition-all">
-              <label className="text-xs font-medium text-slate-300 mb-1 flex items-center gap-1">
-                <Thermometer className="w-3.5 h-3.5 text-amber-400" />
-                Temp (°C)
-              </label>
-              <input
-                type="number"
-                step="any"
-                min="0"
-                max="60"
-                required
-                value={formValues.temperature}
-                onChange={(e) => handleChange('temperature', e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-cyan-300 font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              />
-            </div>
-
-            {/* Humidity */}
-            <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 focus-within:border-cyan-500 transition-all">
-              <label className="text-xs font-medium text-slate-300 mb-1 flex items-center gap-1">
-                <Droplets className="w-3.5 h-3.5 text-blue-400" />
-                Humidity (%)
-              </label>
-              <input
-                type="number"
-                step="any"
-                min="0"
-                max="100"
-                required
-                value={formValues.humidity}
-                onChange={(e) => handleChange('humidity', e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-cyan-300 font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              />
-            </div>
-
-            {/* pH */}
-            <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 focus-within:border-cyan-500 transition-all">
-              <label className="text-xs font-medium text-slate-300 mb-1 flex items-center gap-1">
-                <TestTube className="w-3.5 h-3.5 text-purple-400" />
-                Soil pH
-              </label>
-              <input
-                type="number"
-                step="any"
-                min="1"
-                max="14"
-                required
-                value={formValues.ph}
-                onChange={(e) => handleChange('ph', e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-purple-300 font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-
-            {/* Rainfall */}
-            <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 focus-within:border-cyan-500 transition-all">
-              <label className="text-xs font-medium text-slate-300 mb-1 flex items-center gap-1">
-                <CloudRain className="w-3.5 h-3.5 text-indigo-400" />
-                Rainfall (mm)
-              </label>
-              <input
-                type="number"
-                step="any"
-                min="0"
-                max="500"
-                required
-                value={formValues.rainfall}
-                onChange={(e) => handleChange('rainfall', e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-indigo-300 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-          <button
-            type="button"
-            onClick={handleReset}
-            disabled={isLoading}
-            className="px-4 py-2.5 rounded-xl border border-slate-700 hover:bg-slate-800 text-slate-300 text-sm font-medium transition-all flex items-center gap-2"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Reset Defaults
-          </button>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/25 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                <span>Running R ML Model...</span>
-              </>
-            ) : (
-              <>
-                <Sprout className="w-4 h-4" />
-                <span>Predict Recommended Crop</span>
-              </>
-            )}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-};
+      <Button
+        type="submit"
+        disabled={isLoading}
+        className="w-full h-11 text-base font-semibold transition-all"
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Analyzing Soil &amp; Climate with R Decision Tree...
+          </>
+        ) : (
+          <>
+            <SlidersHorizontal className="mr-2 h-4 w-4" />
+            Recommend Suitable Crop
+          </>
+        )}
+      </Button>
+    </form>
+  )
+}

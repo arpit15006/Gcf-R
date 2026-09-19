@@ -1,6 +1,7 @@
 import { Info, CheckCircle2 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { Progress } from "@/components/ui/progress"
 import { RiskIndicator } from "./RiskIndicator"
 import type { DiseaseRiskResponse } from "@/types"
 
@@ -128,12 +129,11 @@ export function DiseaseRiskResult({ result, emptyMessage }: DiseaseRiskResultPro
                     </span>
                   </div>
                   {/* Progress Bar Representation */}
-                  <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-emerald-600 h-2 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min(100, Math.max(5, factor.percentage))}%` }}
-                    />
-                  </div>
+                  <Progress
+                    value={factor.percentage}
+                    className="h-2 bg-slate-100"
+                    indicatorClassName="bg-emerald-600"
+                  />
                 </div>
               ))}
             </div>

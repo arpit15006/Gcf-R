@@ -1,7 +1,7 @@
-import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { TrendingUp, Info } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { TrendingUp, ShieldCheck, Activity, Award, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { Separator } from '@/components/ui/separator'
 
 export interface PredictionData {
   predicted_yield: number
@@ -16,58 +16,36 @@ export interface PredictionData {
     rmse: number
     mae: number
   }
+  inputs: {
+    rainfall: number
+    fertilizer: number
+    temperature: number
+    nitrogen: number
+    phosphorus: number
+    potassium: number
+  }
 }
 
 interface YieldPredictionResultProps {
   prediction: PredictionData | null
-  isLoading: boolean
-  error: string | null
+  emptyMessage?: string
 }
 
-export const YieldPredictionResult: React.FC<YieldPredictionResultProps> = ({
-  prediction,
-  isLoading,
-  error,
-}) => {
-  if (isLoading) {
-    return (
-      <Card className="glass-panel border-emerald-900/40 p-6 flex flex-col items-center justify-center min-h-[300px]">
-        <div className="relative flex items-center justify-center mb-4">
-          <div className="w-16 h-16 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin" />
-          <TrendingUp className="w-6 h-6 text-emerald-400 absolute" />
-        </div>
-        <p className="text-slate-300 font-medium">Computing Regression Estimates in R...</p>
-        <p className="text-xs text-slate-500 mt-1">Evaluating 95% prediction intervals & model coefficients</p>
-      </Card>
-    )
-  }
-
-  if (error) {
-    return (
-      <Card className="glass-panel border-red-900/50 p-6 bg-red-950/20">
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20">
-            <AlertTriangle className="w-6 h-6" />
-          </div>
-          <div>
-            <h4 className="text-base font-semibold text-red-400">Prediction Failed</h4>
-            <p className="text-sm text-slate-300 mt-1">{error}</p>
-          </div>
-        </div>
-      </Card>
-    )
-  }
-
+export function YieldPredictionResult({ prediction, emptyMessage }: YieldPredictionResultProps) {
   if (!prediction) {
     return (
-      <Card className="glass-panel border-slate-800 p-8 flex flex-col items-center justify-center text-center min-h-[300px]">
-        <div className="p-4 rounded-full bg-slate-800/60 text-slate-400 mb-3">
-          <TrendingUp className="w-8 h-8 text-emerald-400" />
-        </div>
-        <h3 className="text-lg font-semibold text-slate-200">Ready to Predict Yield</h3>
-        <p className="text-xs text-slate-400 max-w-sm mt-1">
-          Adjust the environmental and soil variables on the left form and click <strong>Predict Crop Yield</strong> to run the R linear regression model.
-        </p>
+      <Card className="border-dashed border-2 border-slate-200 bg-slate-50/50">
+        <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="rounded-full bg-emerald-50 p-3 text-emerald-600 mb-3 border border-emerald-100">
+            <Info className="h-6 w-6" />
+          </div>
+          <h3 className="text-base font-semibold text-slate-800">
+            Awaiting Field &amp; Soil Inputs
+          </h3>
+          <p className="mt-1 text-sm text-slate-500 max-w-sm">
+            {emptyMessage || "Fill in rainfall, fertilizer, and nutrient variables and click 'Predict Harvest Yield' to run inference."}
+          </p>
+        </CardContent>
       </Card>
     )
   }
@@ -76,126 +54,124 @@ export const YieldPredictionResult: React.FC<YieldPredictionResultProps> = ({
   const lower = confidence_interval.lower
   const upper = confidence_interval.upper
 
-  // Yield level classification
-  let statusBadge = { label: 'Optimal High Yield', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40', icon: CheckCircle2 }
-  if (predicted_yield < 8.0) {
-    statusBadge = { label: 'Low Yield Warning', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40', icon: AlertTriangle }
-  } else if (predicted_yield >= 8.0 && predicted_yield < 10.5) {
-    statusBadge = { label: 'Moderate Yield', color: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40', icon: CheckCircle2 }
-  }
-
-  const StatusIcon = statusBadge.icon
-
   return (
-    <Card className="glass-panel glass-panel-hover border-emerald-500/30 overflow-hidden relative">
-      <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+    <Card className="border-slate-200 bg-white shadow-sm overflow-hidden animate-in fade-in-50 duration-200">
+      {/* Header Banner */}
+      <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+        <div>
+          <h3 className="text-sm uppercase tracking-wider font-semibold text-emerald-400">
+            Inference Report
+          </h3>
+          <p className="text-lg font-bold text-white">
+            Crop Yield Forecast
+          </p>
+        </div>
+        <Badge variant="default" className="bg-emerald-600 text-white px-3 py-1 font-bold">
+          R² = {(model_metrics.r2 * 100).toFixed(1)}% FIT
+        </Badge>
+      </div>
 
-      <CardHeader className="pb-3 border-b border-slate-800/60">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <TrendingUp className="w-5 h-5" />
+      <CardContent className="p-6 space-y-6">
+        {/* Core Highlight Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200">
+          <div>
+            <div className="text-xs uppercase font-medium text-slate-500">
+              Estimated Yield
             </div>
-            <div>
-              <CardTitle className="text-xl font-bold text-slate-100">Yield Prediction Result</CardTitle>
-              <CardDescription>R Multiple Linear Regression Output</CardDescription>
+            <div className="text-2xl font-extrabold text-slate-900 mt-1 flex items-center gap-1.5">
+              <TrendingUp className="h-6 w-6 text-emerald-600 shrink-0" />
+              <span>{predicted_yield.toFixed(2)}</span>
+              <span className="text-xs font-semibold text-slate-500">{unit}</span>
             </div>
           </div>
-          <Badge className={`px-3 py-1 text-xs font-semibold flex items-center gap-1.5 ${statusBadge.color}`}>
-            <StatusIcon className="w-3.5 h-3.5" />
-            {statusBadge.label}
-          </Badge>
-        </div>
-      </CardHeader>
 
-      <CardContent className="pt-6 space-y-6">
-        {/* Main Display Metric */}
-        <div className="bg-slate-950/80 rounded-xl p-6 border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 shadow-inner">
-          <div className="text-center md:text-left">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Predicted Crop Yield</span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
-                {predicted_yield.toFixed(2)}
+          <div>
+            <div className="text-xs uppercase font-medium text-slate-500">
+              Confidence Interval
+            </div>
+            <div className="text-sm font-bold text-slate-800 mt-2">
+              [{lower.toFixed(2)} - {upper.toFixed(2)}] {unit}
+            </div>
+            <div className="text-[11px] text-slate-400 mt-0.5">
+              95% Prediction Range
+            </div>
+          </div>
+
+          <div>
+            <div className="text-xs uppercase font-medium text-slate-500">
+              Model Accuracy
+            </div>
+            <div className="text-xl font-extrabold text-slate-900 mt-1">
+              {Math.round(model_metrics.r2 * 100)}%
+            </div>
+            <div className="text-[11px] text-slate-400 mt-0.5">
+              RMSE: {model_metrics.rmse.toFixed(3)}
+            </div>
+          </div>
+        </div>
+
+        {/* Statistical Performance Metrics */}
+        <div>
+          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+            Model Validation Metrics
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="bg-slate-50 p-2.5 rounded border border-slate-200">
+              <span className="text-slate-400 block font-medium">Coefficient of Determination</span>
+              <span className="text-base font-bold text-slate-800">R² = {model_metrics.r2.toFixed(4)}</span>
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded border border-slate-200">
+              <span className="text-slate-400 block font-medium">Root Mean Squared Error</span>
+              <span className="text-base font-bold text-slate-800">RMSE = {model_metrics.rmse.toFixed(4)}</span>
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded border border-slate-200">
+              <span className="text-slate-400 block font-medium">Mean Absolute Error</span>
+              <span className="text-base font-bold text-slate-800">MAE = {model_metrics.mae.toFixed(4)}</span>
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Factors & Inputs Snapshot */}
+        {prediction.inputs && (
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
+                Field Conditions Recorded
+              </h4>
+              <span className="text-xs text-slate-500">
+                Input Feature Snapshot
               </span>
-              <span className="text-lg font-bold text-emerald-400">{unit}</span>
             </div>
-            <p className="text-xs text-slate-400 mt-1">
-              Equivalent to ~{(predicted_yield * 100).toFixed(0)} kg/acre
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-2 w-full md:w-auto">
-            <div className="bg-slate-900/90 rounded-lg p-3 border border-slate-800 text-xs space-y-1">
-              <div className="flex justify-between gap-4 text-slate-400">
-                <span>Model Fit ($R^2$):</span>
-                <span className="font-bold text-emerald-400">{(model_metrics.r2 * 100).toFixed(1)}%</span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+              <div className="bg-slate-50 p-2 rounded border border-slate-200">
+                <span className="text-slate-400 block">Rainfall</span>
+                <span className="font-semibold text-slate-800">{prediction.inputs.rainfall} mm</span>
               </div>
-              <div className="flex justify-between gap-4 text-slate-400">
-                <span>Root Mean Sq Error:</span>
-                <span className="font-bold text-slate-200">±{model_metrics.rmse} {unit}</span>
+              <div className="bg-slate-50 p-2 rounded border border-slate-200">
+                <span className="text-slate-400 block">Fertilizer</span>
+                <span className="font-semibold text-slate-800">{prediction.inputs.fertilizer} kg/acre</span>
+              </div>
+              <div className="bg-slate-50 p-2 rounded border border-slate-200">
+                <span className="text-slate-400 block">Temperature</span>
+                <span className="font-semibold text-slate-800">{prediction.inputs.temperature} °C</span>
+              </div>
+              <div className="bg-slate-50 p-2 rounded border border-slate-200">
+                <span className="text-slate-400 block">Nitrogen</span>
+                <span className="font-semibold text-slate-800">{prediction.inputs.nitrogen} kg/ha</span>
+              </div>
+              <div className="bg-slate-50 p-2 rounded border border-slate-200">
+                <span className="text-slate-400 block">Phosphorus</span>
+                <span className="font-semibold text-slate-800">{prediction.inputs.phosphorus} kg/ha</span>
+              </div>
+              <div className="bg-slate-50 p-2 rounded border border-slate-200">
+                <span className="text-slate-400 block">Potassium</span>
+                <span className="font-semibold text-slate-800">{prediction.inputs.potassium} kg/ha</span>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* 95% Confidence / Prediction Interval Bar */}
-        <div className="bg-slate-950/50 p-4 rounded-xl border border-slate-800 space-y-3">
-          <div className="flex justify-between items-center text-xs">
-            <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              95% Prediction Interval ({confidence_interval.level})
-            </span>
-            <span className="text-slate-400">
-              [{lower} - {upper}] {unit}
-            </span>
-          </div>
-
-          {/* Visual Range bar */}
-          <div className="relative w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
-            <div
-              className="absolute h-full bg-gradient-to-r from-emerald-600/40 via-emerald-400 to-teal-500/40 rounded-full"
-              style={{
-                left: `${Math.max(0, ((lower - 4) / (14 - 4)) * 100)}%`,
-                width: `${Math.min(100, ((upper - lower) / (14 - 4)) * 100)}%`,
-              }}
-            />
-            {/* Point estimate marker */}
-            <div
-              className="absolute top-0 bottom-0 w-1.5 bg-amber-300 shadow-md transform -translate-x-1/2"
-              style={{ left: `${Math.max(0, Math.min(100, ((predicted_yield - 4) / (14 - 4)) * 100))}%` }}
-            />
-          </div>
-
-          <div className="flex justify-between text-[11px] text-slate-500 pt-0.5">
-            <span>Lower Limit: {lower} {unit}</span>
-            <span className="font-medium text-amber-300">Point Est: {predicted_yield} {unit}</span>
-            <span>Upper Limit: {upper} {unit}</span>
-          </div>
-        </div>
-
-        {/* Agronomic Summary Badges */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-          <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
-            <span className="text-[11px] text-slate-400 block">R Script ML Engine</span>
-            <span className="font-semibold text-emerald-400 mt-0.5 block flex items-center gap-1">
-              <Activity className="w-3.5 h-3.5" /> Multiple Regression
-            </span>
-          </div>
-
-          <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
-            <span className="text-[11px] text-slate-400 block">Yield Benchmark</span>
-            <span className="font-semibold text-slate-200 mt-0.5 block">
-              {predicted_yield >= 9.05 ? '+ Above Dataset Avg' : '- Below Dataset Avg'}
-            </span>
-          </div>
-
-          <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800 col-span-2 md:col-span-1">
-            <span className="text-[11px] text-slate-400 block">Yield Accuracy</span>
-            <span className="font-semibold text-cyan-400 mt-0.5 block flex items-center gap-1">
-              <Award className="w-3.5 h-3.5" /> High Confidence
-            </span>
-          </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   )

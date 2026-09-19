@@ -1,336 +1,541 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React from 'react'
+import { Sparkles, SlidersHorizontal, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  FlaskConical,
-  CloudSun,
-  Sprout,
-  Tractor,
-  Droplets,
-  RotateCcw,
-  Sparkles,
-  Loader2,
-} from "lucide-react";
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
+} from '@/components/ui/select'
 
 export interface IrrigationFormData {
-  Soil_Type: string;
-  Soil_pH: number | "";
-  Soil_Moisture: number | "";
-  Organic_Carbon: number | "";
-  Electrical_Conductivity: number | "";
-  Temperature_C: number | "";
-  Humidity: number | "";
-  Rainfall_mm: number | "";
-  Sunlight_Hours: number | "";
-  Wind_Speed_kmh: number | "";
-  Crop_Type: string;
-  Crop_Growth_Stage: string;
-  Season: string;
-  Irrigation_Type: string;
-  Water_Source: string;
-  Field_Area_hectare: number | "";
-  Mulching_Used: string;
-  Previous_Irrigation_mm: number | "";
-  Region: string;
+  Soil_Type: string
+  Soil_pH: number | ""
+  Soil_Moisture: number | ""
+  Organic_Carbon: number | ""
+  Electrical_Conductivity: number | ""
+  Temperature_C: number | ""
+  Humidity: number | ""
+  Rainfall_mm: number | ""
+  Sunlight_Hours: number | ""
+  Wind_Speed_kmh: number | ""
+  Crop_Type: string
+  Crop_Growth_Stage: string
+  Season: string
+  Irrigation_Type: string
+  Water_Source: string
+  Field_Area_hectare: number | ""
+  Mulching_Used: string
+  Previous_Irrigation_mm: number | ""
+  Region: string
 }
 
-export const INITIAL_FORM_DATA: IrrigationFormData = {
-  Soil_Type: "",
-  Soil_pH: "",
-  Soil_Moisture: "",
-  Organic_Carbon: "",
-  Electrical_Conductivity: "",
-  Temperature_C: "",
-  Humidity: "",
-  Rainfall_mm: "",
-  Sunlight_Hours: "",
-  Wind_Speed_kmh: "",
-  Crop_Type: "",
-  Crop_Growth_Stage: "",
-  Season: "",
-  Irrigation_Type: "",
-  Water_Source: "",
-  Field_Area_hectare: "",
-  Mulching_Used: "",
-  Previous_Irrigation_mm: "",
-  Region: "",
-};
+export const SAMPLE_PRESETS: { name: string; values: IrrigationFormData }[] = [
+  {
+    name: "Wheat (North Rabi)",
+    values: {
+      Soil_Type: "Loamy",
+      Soil_pH: 6.5,
+      Soil_Moisture: 35.0,
+      Organic_Carbon: 0.65,
+      Electrical_Conductivity: 1.5,
+      Temperature_C: 22.0,
+      Humidity: 45.0,
+      Rainfall_mm: 15.0,
+      Sunlight_Hours: 8.0,
+      Wind_Speed_kmh: 12.0,
+      Crop_Type: "Wheat",
+      Crop_Growth_Stage: "Vegetative",
+      Season: "Rabi",
+      Irrigation_Type: "Drip",
+      Water_Source: "Groundwater",
+      Field_Area_hectare: 2.5,
+      Mulching_Used: "Yes",
+      Previous_Irrigation_mm: 20.0,
+      Region: "North",
+    }
+  },
+  {
+    name: "Rice (East Kharif)",
+    values: {
+      Soil_Type: "Clay",
+      Soil_pH: 6.0,
+      Soil_Moisture: 65.0,
+      Organic_Carbon: 0.85,
+      Electrical_Conductivity: 1.2,
+      Temperature_C: 29.0,
+      Humidity: 82.0,
+      Rainfall_mm: 180.0,
+      Sunlight_Hours: 6.5,
+      Wind_Speed_kmh: 10.0,
+      Crop_Type: "Rice",
+      Crop_Growth_Stage: "Vegetative",
+      Season: "Kharif",
+      Irrigation_Type: "Canal",
+      Water_Source: "River",
+      Field_Area_hectare: 4.0,
+      Mulching_Used: "No",
+      Previous_Irrigation_mm: 50.0,
+      Region: "East",
+    }
+  },
+  {
+    name: "Maize (South Zaid)",
+    values: {
+      Soil_Type: "Sandy",
+      Soil_pH: 7.2,
+      Soil_Moisture: 25.0,
+      Organic_Carbon: 0.4,
+      Electrical_Conductivity: 1.8,
+      Temperature_C: 34.0,
+      Humidity: 35.0,
+      Rainfall_mm: 5.0,
+      Sunlight_Hours: 9.5,
+      Wind_Speed_kmh: 18.0,
+      Crop_Type: "Maize",
+      Crop_Growth_Stage: "Flowering",
+      Season: "Zaid",
+      Irrigation_Type: "Sprinkler",
+      Water_Source: "Reservoir",
+      Field_Area_hectare: 1.8,
+      Mulching_Used: "Yes",
+      Previous_Irrigation_mm: 15.0,
+      Region: "South",
+    }
+  }
+]
 
-export const SAMPLE_FORM_DATA: IrrigationFormData = {
-  Soil_Type: "Clay",
-  Soil_pH: 6.14,
-  Soil_Moisture: 36.48,
-  Organic_Carbon: 0.42,
-  Electrical_Conductivity: 2.17,
-  Temperature_C: 21.9,
-  Humidity: 40.0,
-  Rainfall_mm: 102.1,
-  Sunlight_Hours: 8.0,
-  Wind_Speed_kmh: 14.5,
-  Crop_Type: "Wheat",
-  Crop_Growth_Stage: "Vegetative",
-  Season: "Rabi",
-  Irrigation_Type: "Sprinkler",
-  Water_Source: "River",
-  Field_Area_hectare: 2.5,
-  Mulching_Used: "No",
-  Previous_Irrigation_mm: 20.0,
-  Region: "North",
-};
+const SOIL_TYPES = ["Clay", "Loamy", "Sandy", "Silt"]
+const CROP_TYPES = ["Cotton", "Maize", "Potato", "Rice", "Sugarcane", "Wheat"]
+const GROWTH_STAGES = ["Flowering", "Harvest", "Sowing", "Vegetative"]
+const SEASONS = ["Kharif", "Rabi", "Zaid"]
+const IRRIGATION_TYPES = ["Canal", "Drip", "Rainfed", "Sprinkler"]
+const WATER_SOURCES = ["Groundwater", "Rainwater", "Reservoir", "River"]
+const MULCHING_OPTIONS = ["Yes", "No"]
+const REGIONS = ["Central", "East", "North", "South", "West"]
 
-// ---------------------------------------------------------------------------
-// Dropdown options — from the actual dataset
-// ---------------------------------------------------------------------------
-
-const SOIL_TYPES = ["Clay", "Loamy", "Sandy", "Silt"];
-const CROP_TYPES = ["Cotton", "Maize", "Potato", "Rice", "Sugarcane", "Wheat"];
-const GROWTH_STAGES = ["Flowering", "Harvest", "Sowing", "Vegetative"];
-const SEASONS = ["Kharif", "Rabi", "Zaid"];
-const IRRIGATION_TYPES = ["Canal", "Drip", "Rainfed", "Sprinkler"];
-const WATER_SOURCES = ["Groundwater", "Rainwater", "Reservoir", "River"];
-const MULCHING_OPTIONS = ["Yes", "No"];
-const REGIONS = ["Central", "East", "North", "South", "West"];
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
-interface Props {
-  formData: IrrigationFormData;
-  onChange: (data: IrrigationFormData) => void;
-  onSubmit: () => void;
-  isLoading: boolean;
+interface IrrigationInputFormProps {
+  formData: IrrigationFormData
+  onChange: (data: IrrigationFormData) => void
+  onSubmit: () => void
+  isLoading: boolean
 }
 
-export default function IrrigationInputForm({
+export function IrrigationInputForm({
   formData,
   onChange,
   onSubmit,
   isLoading,
-}: Props) {
+}: IrrigationInputFormProps) {
   const updateField = <K extends keyof IrrigationFormData>(
     key: K,
     value: IrrigationFormData[K]
   ) => {
-    onChange({ ...formData, [key]: value });
-  };
-
-  const handleNumericChange = (
-    key: keyof IrrigationFormData,
-    raw: string
-  ) => {
-    if (raw === "") {
-      updateField(key, "" as never);
-    } else {
-      const num = parseFloat(raw);
-      if (!isNaN(num)) updateField(key, num as never);
-    }
-  };
+    onChange({ ...formData, [key]: value })
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit();
-  };
-
-  // Reusable select renderer
-  const renderSelect = (
-    label: string,
-    field: keyof IrrigationFormData,
-    options: string[]
-  ) => (
-    <div className="space-y-1.5">
-      <Label htmlFor={field} className="text-xs font-medium text-foreground/80">
-        {label}
-      </Label>
-      <Select
-        value={formData[field] as string}
-        onValueChange={(v) => updateField(field, v as never)}
-      >
-        <SelectTrigger id={field} className="w-full bg-background transition-colors hover:border-primary/50 focus:border-primary">
-          <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((opt) => (
-            <SelectItem key={opt} value={opt}>
-              {opt}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-
-  // Reusable numeric input renderer
-  const renderNumericInput = (
-    label: string,
-    field: keyof IrrigationFormData,
-    placeholder: string,
-    step = "any",
-    unit?: string
-  ) => (
-    <div className="space-y-1.5">
-      <div className="flex justify-between items-center">
-        <Label htmlFor={field} className="text-xs font-medium text-foreground/80">
-          {label}
-        </Label>
-        {unit && <span className="text-[11px] text-muted-foreground font-mono">{unit}</span>}
-      </div>
-      <Input
-        id={field}
-        type="number"
-        step={step}
-        placeholder={placeholder}
-        value={formData[field] === "" ? "" : formData[field]}
-        onChange={(e) => handleNumericChange(field, e.target.value)}
-        className="w-full bg-background transition-colors hover:border-primary/50 focus:border-primary"
-      />
-    </div>
-  );
+    e.preventDefault()
+    onSubmit()
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* ── Toolbar ────────────────────────────────────────── */}
-      <div className="flex items-center justify-between pb-1">
-        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-          Input Parameters (19 Features)
+      {/* Field Presets */}
+      <div className="flex flex-wrap items-center gap-2 pb-3 border-b border-slate-100">
+        <span className="text-xs text-slate-500 font-medium flex items-center gap-1 mr-1">
+          <Sparkles className="h-3.5 w-3.5 text-emerald-600" /> Presets:
         </span>
-        <div className="flex items-center gap-2">
+        {SAMPLE_PRESETS.map((preset) => (
           <Button
+            key={preset.name}
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => onChange(SAMPLE_FORM_DATA)}
-            className="h-8 text-xs font-medium flex items-center gap-1.5 border-primary/20 hover:bg-primary/5 text-primary"
+            onClick={() => onChange(preset.values)}
+            className="h-7 text-xs px-2.5 bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 border-slate-200"
           >
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Fill Sample Data
+            {preset.name}
           </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => onChange(INITIAL_FORM_DATA)}
-            className="h-8 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        {/* Crop Type */}
+        <div className="space-y-2">
+          <Label htmlFor="irr-crop" className="text-sm font-medium text-slate-700">
+            Crop Species <span className="text-rose-500">*</span>
+          </Label>
+          <Select
+            value={formData.Crop_Type}
+            onValueChange={(val) => updateField("Crop_Type", val)}
+            disabled={isLoading}
           >
-            <RotateCcw className="h-3 w-3" />
-            Reset
-          </Button>
+            <SelectTrigger id="irr-crop" className="w-full">
+              <SelectValue placeholder="Select crop species" />
+            </SelectTrigger>
+            <SelectContent>
+              {CROP_TYPES.map((c) => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Soil Type */}
+        <div className="space-y-2">
+          <Label htmlFor="irr-soil" className="text-sm font-medium text-slate-700">
+            Soil Texture <span className="text-rose-500">*</span>
+          </Label>
+          <Select
+            value={formData.Soil_Type}
+            onValueChange={(val) => updateField("Soil_Type", val)}
+            disabled={isLoading}
+          >
+            <SelectTrigger id="irr-soil" className="w-full">
+              <SelectValue placeholder="Select soil texture" />
+            </SelectTrigger>
+            <SelectContent>
+              {SOIL_TYPES.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Growth Stage */}
+        <div className="space-y-2">
+          <Label htmlFor="irr-stage" className="text-sm font-medium text-slate-700">
+            Growth Stage <span className="text-rose-500">*</span>
+          </Label>
+          <Select
+            value={formData.Crop_Growth_Stage}
+            onValueChange={(val) => updateField("Crop_Growth_Stage", val)}
+            disabled={isLoading}
+          >
+            <SelectTrigger id="irr-stage" className="w-full">
+              <SelectValue placeholder="Select growth stage" />
+            </SelectTrigger>
+            <SelectContent>
+              {GROWTH_STAGES.map((g) => (
+                <SelectItem key={g} value={g}>{g}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Region */}
+        <div className="space-y-2">
+          <Label htmlFor="irr-region" className="text-sm font-medium text-slate-700">
+            Geographic Region <span className="text-rose-500">*</span>
+          </Label>
+          <Select
+            value={formData.Region}
+            onValueChange={(val) => updateField("Region", val)}
+            disabled={isLoading}
+          >
+            <SelectTrigger id="irr-region" className="w-full">
+              <SelectValue placeholder="Select region" />
+            </SelectTrigger>
+            <SelectContent>
+              {REGIONS.map((r) => (
+                <SelectItem key={r} value={r}>{r}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Soil Moisture */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="irr-moisture" className="text-sm font-medium text-slate-700">Soil Moisture (%)</Label>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              {formData.Soil_Moisture || 0}%
+            </span>
+          </div>
+          <Input
+            id="irr-moisture"
+            type="number"
+            min="0"
+            max="100"
+            step="0.5"
+            value={formData.Soil_Moisture}
+            onChange={(e) => updateField("Soil_Moisture", parseFloat(e.target.value) || "")}
+            disabled={isLoading}
+            placeholder="e.g. 35"
+          />
+        </div>
+
+        {/* Temperature */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="irr-temp" className="text-sm font-medium text-slate-700">Temperature (°C)</Label>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              {formData.Temperature_C || 0} °C
+            </span>
+          </div>
+          <Input
+            id="irr-temp"
+            type="number"
+            min="5"
+            max="55"
+            step="0.5"
+            value={formData.Temperature_C}
+            onChange={(e) => updateField("Temperature_C", parseFloat(e.target.value) || "")}
+            disabled={isLoading}
+            placeholder="e.g. 24"
+          />
+        </div>
+
+        {/* Humidity */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="irr-humidity" className="text-sm font-medium text-slate-700">Air Humidity (%)</Label>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              {formData.Humidity || 0}%
+            </span>
+          </div>
+          <Input
+            id="irr-humidity"
+            type="number"
+            min="10"
+            max="100"
+            step="1"
+            value={formData.Humidity}
+            onChange={(e) => updateField("Humidity", parseFloat(e.target.value) || "")}
+            disabled={isLoading}
+            placeholder="e.g. 60"
+          />
+        </div>
+
+        {/* Rainfall */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="irr-rain" className="text-sm font-medium text-slate-700">Rainfall (mm)</Label>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              {formData.Rainfall_mm || 0} mm
+            </span>
+          </div>
+          <Input
+            id="irr-rain"
+            type="number"
+            min="0"
+            max="500"
+            step="1"
+            value={formData.Rainfall_mm}
+            onChange={(e) => updateField("Rainfall_mm", parseFloat(e.target.value) || "")}
+            disabled={isLoading}
+            placeholder="e.g. 20"
+          />
+        </div>
+
+        {/* Soil pH */}
+        <div className="space-y-2">
+          <Label htmlFor="irr-ph" className="text-sm font-medium text-slate-700">Soil pH</Label>
+          <Input
+            id="irr-ph"
+            type="number"
+            min="3"
+            max="11"
+            step="0.1"
+            value={formData.Soil_pH}
+            onChange={(e) => updateField("Soil_pH", parseFloat(e.target.value) || "")}
+            disabled={isLoading}
+            placeholder="e.g. 6.5"
+          />
+        </div>
+
+        {/* Sunlight Hours */}
+        <div className="space-y-2">
+          <Label htmlFor="irr-sunlight" className="text-sm font-medium text-slate-700">Sunlight (hours/day)</Label>
+          <Input
+            id="irr-sunlight"
+            type="number"
+            min="0"
+            max="16"
+            step="0.5"
+            value={formData.Sunlight_Hours}
+            onChange={(e) => updateField("Sunlight_Hours", parseFloat(e.target.value) || "")}
+            disabled={isLoading}
+            placeholder="e.g. 8.0"
+          />
+        </div>
+
+        {/* Season & Irrigation System */}
+        <div className="space-y-2">
+          <Label htmlFor="irr-season" className="text-sm font-medium text-slate-700">Agricultural Season</Label>
+          <Select
+            value={formData.Season}
+            onValueChange={(val) => updateField("Season", val)}
+            disabled={isLoading}
+          >
+            <SelectTrigger id="irr-season" className="w-full">
+              <SelectValue placeholder="Select season" />
+            </SelectTrigger>
+            <SelectContent>
+              {SEASONS.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="irr-sys" className="text-sm font-medium text-slate-700">Irrigation System</Label>
+          <Select
+            value={formData.Irrigation_Type}
+            onValueChange={(val) => updateField("Irrigation_Type", val)}
+            disabled={isLoading}
+          >
+            <SelectTrigger id="irr-sys" className="w-full">
+              <SelectValue placeholder="Select system type" />
+            </SelectTrigger>
+            <SelectContent>
+              {IRRIGATION_TYPES.map((t) => (
+                <SelectItem key={t} value={t}>{t}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Water Source & Mulching */}
+        <div className="space-y-2">
+          <Label htmlFor="irr-source" className="text-sm font-medium text-slate-700">Water Source</Label>
+          <Select
+            value={formData.Water_Source}
+            onValueChange={(val) => updateField("Water_Source", val)}
+            disabled={isLoading}
+          >
+            <SelectTrigger id="irr-source" className="w-full">
+              <SelectValue placeholder="Select water source" />
+            </SelectTrigger>
+            <SelectContent>
+              {WATER_SOURCES.map((w) => (
+                <SelectItem key={w} value={w}>{w}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="irr-mulch" className="text-sm font-medium text-slate-700">Mulching Used</Label>
+          <Select
+            value={formData.Mulching_Used}
+            onValueChange={(val) => updateField("Mulching_Used", val)}
+            disabled={isLoading}
+          >
+            <SelectTrigger id="irr-mulch" className="w-full">
+              <SelectValue placeholder="Select mulching" />
+            </SelectTrigger>
+            <SelectContent>
+              {MULCHING_OPTIONS.map((m) => (
+                <SelectItem key={m} value={m}>{m}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Field Area & Previous Irrigation */}
+        <div className="space-y-2">
+          <Label htmlFor="irr-area" className="text-sm font-medium text-slate-700">Field Area (hectares)</Label>
+          <Input
+            id="irr-area"
+            type="number"
+            min="0.1"
+            max="100"
+            step="0.1"
+            value={formData.Field_Area_hectare}
+            onChange={(e) => updateField("Field_Area_hectare", parseFloat(e.target.value) || "")}
+            disabled={isLoading}
+            placeholder="e.g. 2.5"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="irr-prev" className="text-sm font-medium text-slate-700">Previous Irrigation (mm)</Label>
+          <Input
+            id="irr-prev"
+            type="number"
+            min="0"
+            max="200"
+            step="1"
+            value={formData.Previous_Irrigation_mm}
+            onChange={(e) => updateField("Previous_Irrigation_mm", parseFloat(e.target.value) || "")}
+            disabled={isLoading}
+            placeholder="e.g. 20"
+          />
+        </div>
+
+        {/* EC & Organic Carbon */}
+        <div className="space-y-2">
+          <Label htmlFor="irr-carbon" className="text-sm font-medium text-slate-700">Organic Carbon (%)</Label>
+          <Input
+            id="irr-carbon"
+            type="number"
+            min="0"
+            max="5"
+            step="0.05"
+            value={formData.Organic_Carbon}
+            onChange={(e) => updateField("Organic_Carbon", parseFloat(e.target.value) || "")}
+            disabled={isLoading}
+            placeholder="e.g. 0.6"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="irr-ec" className="text-sm font-medium text-slate-700">Electrical Cond. (dS/m)</Label>
+          <Input
+            id="irr-ec"
+            type="number"
+            min="0"
+            max="15"
+            step="0.1"
+            value={formData.Electrical_Conductivity}
+            onChange={(e) => updateField("Electrical_Conductivity", parseFloat(e.target.value) || "")}
+            disabled={isLoading}
+            placeholder="e.g. 1.5"
+          />
+        </div>
+
+        {/* Wind Speed */}
+        <div className="sm:col-span-2 space-y-2">
+          <Label htmlFor="irr-wind" className="text-sm font-medium text-slate-700">Wind Speed (km/h)</Label>
+          <Input
+            id="irr-wind"
+            type="number"
+            min="0"
+            max="100"
+            step="0.5"
+            value={formData.Wind_Speed_kmh}
+            onChange={(e) => updateField("Wind_Speed_kmh", parseFloat(e.target.value) || "")}
+            disabled={isLoading}
+            placeholder="e.g. 12.0"
+          />
         </div>
       </div>
 
-      {/* ── Soil ─────────────────────────────────────────── */}
-      <Card className="shadow-xs border transition-shadow hover:shadow-sm">
-        <CardHeader className="py-3 px-5 border-b border-border/50 bg-muted/20">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
-            <div className="p-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-              <FlaskConical className="h-4 w-4" />
-            </div>
-            <span>Soil Properties</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {renderSelect("Soil Type", "Soil_Type", SOIL_TYPES)}
-          {renderNumericInput("Soil pH", "Soil_pH", "e.g. 6.5", "0.01", "pH scale")}
-          {renderNumericInput("Soil Moisture", "Soil_Moisture", "e.g. 35.0", "0.01", "%")}
-          {renderNumericInput("Organic Carbon", "Organic_Carbon", "e.g. 0.5", "0.01", "%")}
-          {renderNumericInput(
-            "Electrical Conductivity",
-            "Electrical_Conductivity",
-            "e.g. 1.2",
-            "0.01",
-            "dS/m"
-          )}
-        </CardContent>
-      </Card>
-
-      {/* ── Weather ──────────────────────────────────────── */}
-      <Card className="shadow-xs border transition-shadow hover:shadow-sm">
-        <CardHeader className="py-3 px-5 border-b border-border/50 bg-muted/20">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
-            <div className="p-1 rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400">
-              <CloudSun className="h-4 w-4" />
-            </div>
-            <span>Weather Conditions</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {renderNumericInput("Temperature", "Temperature_C", "e.g. 28.5", "0.1", "°C")}
-          {renderNumericInput("Humidity", "Humidity", "e.g. 65.0", "0.1", "%")}
-          {renderNumericInput("Rainfall", "Rainfall_mm", "e.g. 12.0", "0.1", "mm")}
-          {renderNumericInput("Sunlight Hours", "Sunlight_Hours", "e.g. 8.0", "0.1", "hours/day")}
-          {renderNumericInput("Wind Speed", "Wind_Speed_kmh", "e.g. 14.5", "0.1", "km/h")}
-        </CardContent>
-      </Card>
-
-      {/* ── Crop ────────────────────────────────────────── */}
-      <Card className="shadow-xs border transition-shadow hover:shadow-sm">
-        <CardHeader className="py-3 px-5 border-b border-border/50 bg-muted/20">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
-            <div className="p-1 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400">
-              <Sprout className="h-4 w-4" />
-            </div>
-            <span>Crop Information</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {renderSelect("Crop Type", "Crop_Type", CROP_TYPES)}
-          {renderSelect("Growth Stage", "Crop_Growth_Stage", GROWTH_STAGES)}
-          {renderSelect("Season", "Season", SEASONS)}
-        </CardContent>
-      </Card>
-
-      {/* ── Irrigation / Farm ───────────────────────────── */}
-      <Card className="shadow-xs border transition-shadow hover:shadow-sm">
-        <CardHeader className="py-3 px-5 border-b border-border/50 bg-muted/20">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
-            <div className="p-1 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-              <Tractor className="h-4 w-4" />
-            </div>
-            <span>Irrigation &amp; Farm Details</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {renderSelect("Irrigation Type", "Irrigation_Type", IRRIGATION_TYPES)}
-          {renderSelect("Water Source", "Water_Source", WATER_SOURCES)}
-          {renderNumericInput("Field Area", "Field_Area_hectare", "e.g. 2.5", "0.1", "hectares")}
-          {renderSelect("Mulching Used", "Mulching_Used", MULCHING_OPTIONS)}
-          {renderNumericInput("Previous Irrigation", "Previous_Irrigation_mm", "e.g. 20.0", "0.1", "mm")}
-          {renderSelect("Region", "Region", REGIONS)}
-        </CardContent>
-      </Card>
-
-      {/* ── Submit ──────────────────────────────────────── */}
       <Button
         type="submit"
         disabled={isLoading}
-        className="w-full text-base py-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:via-indigo-700 hover:to-blue-800 text-white font-semibold shadow-md shadow-blue-500/20 transition-all duration-200 cursor-pointer disabled:opacity-60"
-        size="lg"
+        className="w-full h-11 text-base font-semibold transition-all"
       >
         {isLoading ? (
-          <span className="flex items-center gap-2">
-            <Loader2 className="h-5 w-5 animate-spin" />
-            Evaluating Agricultural Model…
-          </span>
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Assessing Irrigation Requirement with R Ranger Model...
+          </>
         ) : (
-          <span className="flex items-center gap-2">
-            <Droplets className="h-5 w-5" />
-            Predict Irrigation Need
-          </span>
+          <>
+            <SlidersHorizontal className="mr-2 h-4 w-4" />
+            Calculate Irrigation Requirement
+          </>
         )}
       </Button>
     </form>
-  );
+  )
 }
+
+export default IrrigationInputForm
