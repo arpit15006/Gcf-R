@@ -1,0 +1,27 @@
+{
+  "Plant_Type": {
+    "label": "Crop Species",
+    "percentage": 9.27,
+    "score": 51.82
+  },
+  "Leaf_Color": {
+    "label": "Leaf Discoloration",
+    "percentage": 5.66,
+    "score": 31.61
+  },
+  "Leaf_Spot_Size": {
+    "label": "Leaf Spot Size",
+    "percentage": 28.2,
+    "score": 157.64
+  },
+  "Humidity": {
+    "label": "Air Humidity",
+    "percentage": 28.6,
+    "score": 159.87
+  },
+  "Temperature": {
+    "label": "Ambient Temperature",
+    "percentage": 28.27,
+    "score": 157.99
+  }
+}
