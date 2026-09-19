@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+backend/venv/
+venv/
+.venv/
+
+# Build outputs
+frontend/dist/
+dist/
+build/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+*.log
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
