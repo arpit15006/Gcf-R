@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+dist/
+build/
+
+# Python virtual environment & caches
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# R temporary files & model artifacts
+.Rhistory
+.RData
+.Rproj.user/
+*.rds
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE & OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
